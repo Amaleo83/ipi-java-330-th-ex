@@ -26,25 +26,28 @@ public class EmployeController {
     private EmployeService employeService;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String detail(final ModelMap model,@PathVariable(value = "id") Long id){
+    public String detail(final ModelMap model, @PathVariable(value = "id") Long id) {
         model.put("employe", employeService.findById(id));
         return "detail";
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "", params = "matricule")
-    public String findByMatricule(final ModelMap model,@RequestParam(value = "matricule") String matricule) {
+    public String findByMatricule(final ModelMap model, @RequestParam(value = "matricule") String matricule) {
         model.put("employe", employeService.findMyMatricule(matricule));
         return "detail";
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, value = "")
     public String findEmployeesPagined(final ModelMap model,
-                                              @RequestParam Integer page,
-                                              @RequestParam Integer size,
-                                              @RequestParam String sortProperty,
-                                              @RequestParam String sortDirection) {
+                                       @RequestParam Integer page,
+                                       @RequestParam Integer size,
+                                       @RequestParam String sortProperty,
+                                       @RequestParam String sortDirection) {
         model.put("employes", employeService.findAllEmployes(page, size, sortProperty, sortDirection));
-        return "detail";
+        model.put("start", page * size + 1);
+        model.put("end", page * size + size);
+        model.put("next", page + 1);
+        model.put("previous", page - 1);
+        return "list";
     }
-
 }
